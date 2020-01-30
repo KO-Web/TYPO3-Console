@@ -49,7 +49,7 @@ class Step
      * @param Bootstrap $bootstrap
      * @return void
      */
-    public function __invoke(Bootstrap $bootstrap)
+    public function __invoke($bootstrap)
     {
         ($this->callback)($bootstrap);
     }

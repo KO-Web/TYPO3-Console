@@ -34,28 +34,17 @@ class Scripts
     /**
      * @param Bootstrap $bootstrap
      */
-    public static function initializeConfigurationManagement(Bootstrap $bootstrap)
+    public static function initializeConfigurationManagement($bootstrap)
     {
-        $bootstrap->populateLocalConfiguration();
-        \Closure::bind(function () use ($bootstrap) {
-            $method = 'initializeRuntimeActivatedPackagesFromConfiguration';
-            if (!CompatibilityScripts::isComposerMode()) {
-                $bootstrap->$method(GeneralUtility::makeInstance(PackageManager::class));
-            }
-            $method = 'setDefaultTimezone';
-            $bootstrap->$method();
-        }, null, $bootstrap)();
-        CompatibilityScripts::initializeConfigurationManagement($bootstrap);
+        // noop for TYPO3 10
     }
 
-    public static function baseSetup(Bootstrap $bootstrap)
+    public static function baseSetup($bootstrap)
     {
         define('TYPO3_MODE', 'BE');
         define('PATH_site', \TYPO3\CMS\Core\Utility\GeneralUtility::fixWindowsFilePath(getenv('TYPO3_PATH_ROOT')) . '/');
         define('PATH_thisScript', PATH_site . 'typo3/index.php');
 
-        $bootstrap->setRequestType(TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI);
-        $bootstrap->baseSetup();
         // Mute notices
         error_reporting(E_ALL & ~E_NOTICE);
         $exceptionHandler = new ExceptionHandler();
@@ -70,10 +59,9 @@ class Scripts
      *
      * @return void
      */
-    private static function initializePackageManagement(Bootstrap $bootstrap)
+    private static function initializePackageManagement($bootstrap)
     {
         $packageManager = CompatibilityScripts::createPackageManager();
-        $bootstrap->setEarlyInstance(PackageManager::class, $packageManager);
         GeneralUtility::setSingletonInstance(PackageManager::class, $packageManager);
         ExtensionManagementUtility::setPackageManager($packageManager);
         $packageManager->init();
@@ -96,21 +84,20 @@ class Scripts
         set_error_handler([$errorHandler, 'handleError']);
     }
 
-    public static function initializeDisabledCaching(Bootstrap $bootstrap)
+    public static function initializeDisabledCaching($bootstrap)
     {
         self::initializeCachingFramework($bootstrap, true);
     }
 
-    public static function initializeCaching(Bootstrap $bootstrap)
+    public static function initializeCaching($bootstrap)
     {
         self::initializeCachingFramework($bootstrap);
     }
 
-    private static function initializeCachingFramework(Bootstrap $bootstrap, bool $disableCaching = false)
+    private static function initializeCachingFramework($bootstrap, bool $disableCaching = false)
     {
         $cacheManager = CompatibilityScripts::createCacheManager($disableCaching);
         \TYPO3\CMS\Core\Utility\GeneralUtility::setSingletonInstance(CacheManager::class, $cacheManager);
-        $bootstrap->setEarlyInstance(CacheManager::class, $cacheManager);
     }
 
     /**
@@ -162,8 +149,8 @@ class Scripts
      */
     public static function provideCleanClassImplementations()
     {
-        self::overrideImplementation(\TYPO3\CMS\Extbase\Command\HelpCommandController::class, \Helhum\Typo3Console\Command\HelpCommandController::class);
-        self::overrideImplementation(\TYPO3\CMS\Extbase\Mvc\Cli\Command::class, \Helhum\Typo3Console\Mvc\Cli\Command::class);
+        // self::overrideImplementation(\TYPO3\CMS\Extbase\Command\HelpCommandController::class, \Helhum\Typo3Console\Command\HelpCommandController::class);
+        // self::overrideImplementation(\TYPO3\CMS\Extbase\Mvc\Cli\Command::class, \Helhum\Typo3Console\Mvc\Cli\Command::class);
 
         // @deprecated can be removed once command controller support is removed
         if (empty($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extbase']['typeConverters'])) {

@@ -27,6 +27,7 @@ use Helhum\Typo3Console\Mvc\Cli\Symfony\Application;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -53,8 +54,8 @@ class Kernel
     public function __construct(CompatibilityClassLoader $classLoader)
     {
         $this->ensureRequiredEnvironment();
-        $this->bootstrap = Bootstrap::getInstance();
-        $this->bootstrap->initializeClassLoader($classLoader->getTypo3ClassLoader());
+        SystemEnvironmentBuilder::run(1, SystemEnvironmentBuilder::REQUESTTYPE_BE | SystemEnvironmentBuilder::REQUESTTYPE_CLI);
+        $this->bootstrap = Bootstrap::init($classLoader->getTypo3ClassLoader());
         // Initialize basic annotation loader until TYPO3 does so as well
         AnnotationRegistry::registerLoader('class_exists');
         $this->runLevel = new RunLevel($this->bootstrap);

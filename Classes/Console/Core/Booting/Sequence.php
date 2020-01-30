@@ -87,7 +87,7 @@ class Sequence
      * @throws StepFailedException
      * @return void
      */
-    public function invoke(Bootstrap $bootstrap)
+    public function invoke($bootstrap)
     {
         if (isset($this->steps['start'])) {
             foreach ($this->steps['start'] as $step) {
@@ -105,7 +105,7 @@ class Sequence
      * @throws StepFailedException
      * @return void
      */
-    protected function invokeStep(Step $step, Bootstrap $bootstrap)
+    protected function invokeStep(Step $step, $bootstrap)
     {
         $identifier = $step->getIdentifier();
         try {

@@ -44,7 +44,7 @@ class RunLevel
      */
     private $error;
 
-    public function __construct(Bootstrap $bootstrap)
+    public function __construct($bootstrap)
     {
         $this->bootstrap = $bootstrap;
     }
